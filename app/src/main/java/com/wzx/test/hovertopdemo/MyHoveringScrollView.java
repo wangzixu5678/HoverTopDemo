@@ -19,6 +19,8 @@ public class MyHoveringScrollView extends FrameLayout {
     private int mTopViewTop;
     private View mTopContent;
 
+    private FrameLayout mTitleView;
+
     public MyHoveringScrollView(@NonNull Context context) {
         this(context,null);
     }
@@ -37,6 +39,7 @@ public class MyHoveringScrollView extends FrameLayout {
             @Override
             public void run() {
                 mContentView = (ViewGroup) getChildAt(0);
+                mTitleView = mContentView.findViewById(R.id.ll_title);
                 removeAllViews();
                 MyScrollView scrollView = new MyScrollView(getContext(), MyHoveringScrollView.this);
                 scrollView.addView(mContentView);
@@ -51,6 +54,7 @@ public class MyHoveringScrollView extends FrameLayout {
             public void run() {
                 mTopView = (ViewGroup) mContentView.findViewById(id);
 
+                mTitleView = ((FrameLayout) mTopView.findViewById(R.id.ll_title));
                 int height = mTopView.getChildAt(0).getMeasuredHeight();
                 ViewGroup.LayoutParams params = mTopView.getLayoutParams();
                 params.height = height;
@@ -83,12 +87,14 @@ public class MyHoveringScrollView extends FrameLayout {
                 if (mTopView==null){
                     return;
                 }
-                if (scrollY>=mTopViewTop&&mTopContent.getParent()==mTopView){
+                if (scrollY>=mTopViewTop-DensityUtil.dip2px(getContext(),50)&&mTopContent.getParent()==mTopView){
                     mTopView.removeView(mTopContent);
                     addView(mTopContent);
-                }else if(scrollY < mTopViewTop&&mTopContent.getParent() == MyHoveringScrollView.this){
+                    mTitleView.setVisibility(VISIBLE);
+                }else if(scrollY < mTopViewTop-DensityUtil.dip2px(getContext(),50)&&mTopContent.getParent() == MyHoveringScrollView.this){
                     removeView(mTopContent);
                     mTopView.addView(mTopContent);
+                    mTitleView.setVisibility(GONE);
                 }
             }
         });
